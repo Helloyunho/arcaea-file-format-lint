@@ -1,9 +1,9 @@
 {
-	"name": "arcaea-file-formatter",
-	"description": "Format your Arcaea chart file.",
+	"name": "arcaea-file-format-lint",
+	"description": "Check errors in your Arcaea chart file.",
 	"license": "MIT",
 	"version": "0.1.0",
-	"repository": "github:Helloyunho/arcaea-file-formatter",
+	"repository": "github:Helloyunho/arcaea-file-format-lint",
 	"engines": {
 		"node": ">=14.16"
 	},

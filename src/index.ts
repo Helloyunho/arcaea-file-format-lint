@@ -7,22 +7,22 @@ import { AFFErrorLevel } from './types.js'
 const args = meow(
   `
   Usage
-    $ aff-format <file>
+    $ aff-lint <file>
   
   Options
-    --write, -w  Overwrite the formatted file to disk
+    --fix, -f  Try to fix errors automatically
 `,
   {
     flags: {
-      write: {
+      fix: {
         type: 'boolean',
-        alias: 'w'
+        alias: 'f'
       }
     }
   }
 )
 
-const main = async (files: string[], { write: boolean }) => {
+const main = async (files: string[], { fix: boolean }) => {
   for (const file of files) {
     const content = await readFile(file, 'utf-8')
     const errors = checkAFF(content)
