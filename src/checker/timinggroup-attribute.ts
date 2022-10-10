@@ -1,5 +1,5 @@
-import { timings } from '../associated-data/timing'
-import { AFFChecker, AFFErrorLevel } from '../types'
+import { timings } from '../associated-data/timing.js'
+import { AFFChecker, AFFErrorLevel } from '../types.js'
 
 export const timinggroupAttributeChecker: AFFChecker = (file, errors) => {
   for (const { data } of file.items) {

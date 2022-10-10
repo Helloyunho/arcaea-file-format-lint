@@ -1,5 +1,5 @@
 import { CstParser } from 'chevrotain'
-import { tokenTypes } from './lexer'
+import { tokenTypes } from './lexer.js'
 
 class AFFParser extends CstParser {
   public metadataEntry = this.RULE('metadataEntry', () => {

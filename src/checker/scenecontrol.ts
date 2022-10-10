@@ -6,7 +6,7 @@ import {
   AFFError,
   AFFValues,
   AFFErrorLevel
-} from '../types'
+} from '../types.js'
 import { CstNodeLocation } from 'chevrotain'
 
 export const scenecontrolChecker: AFFChecker = (file, errors) => {

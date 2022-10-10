@@ -1,7 +1,7 @@
 import { CstNodeLocation } from 'chevrotain'
-import { timings, TimingData } from '../associated-data/timing'
-import { lowerBound, upperBound } from '../util/misc'
-import { AFFChecker, AFFError, AFFErrorLevel } from '../types'
+import { timings, TimingData } from '../associated-data/timing.js'
+import { lowerBound, upperBound } from '../util/misc.js'
+import { AFFChecker, AFFError, AFFErrorLevel } from '../types.js'
 
 export const cutByTimingChecker: AFFChecker = (file, error) => {
   const timingData = timings.get(file).datas

@@ -10,8 +10,8 @@ import {
   AFFSceneControlEvent,
   AFFFloat,
   AFFErrorLevel
-} from '../types'
-import { timings } from '../associated-data/timing'
+} from '../types.js'
+import { timings } from '../associated-data/timing.js'
 
 export const overlapChecker: AFFChecker = (file, error) => {
   const trackRecord = new Map<AFFTrackIdValue, WithLocation<AFFTrackItem>[]>()

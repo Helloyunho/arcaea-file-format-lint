@@ -5,7 +5,7 @@ import {
   WithLocation,
   AFFItem,
   AFFErrorLevel
-} from '../types'
+} from '../types.js'
 
 export const floatDigitChecker: AFFChecker = (file, errors) => {
   for (const item of file.items) {

@@ -4,9 +4,9 @@ import {
   WithLocation,
   AFFItem,
   AFFErrorLevel
-} from '../types'
-import { AssociatedDataMap } from '../util/associated-data'
-import { timings } from './timing'
+} from '../types.js'
+import { AssociatedDataMap } from '../util/associated-data.js'
+import { timings } from './timing.js'
 
 export type AllowMemesResult = {
   enable: boolean

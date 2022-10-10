@@ -5,10 +5,10 @@ import {
   AFFErrorLevel,
   AFFItem,
   WithLocation
-} from '../types'
-import { allowMemes } from '../associated-data/allow-memes'
-import { EnwidenData, enwidens } from '../associated-data/enwiden'
-import { upperBound } from '../util/misc'
+} from '../types.js'
+import { allowMemes } from '../associated-data/allow-memes.js'
+import { EnwidenData, enwidens } from '../associated-data/enwiden.js'
+import { upperBound } from '../util/misc.js'
 
 export const arcPositionChecker: AFFChecker = (file, errors) => {
   if (allowMemes.get(file).enable) {

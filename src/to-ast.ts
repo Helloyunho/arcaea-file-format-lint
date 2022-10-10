@@ -5,7 +5,7 @@ import {
   ICstVisitor,
   CstNodeLocation
 } from 'chevrotain'
-import { BaseAffVisitor } from './parser'
+import { BaseAffVisitor } from './parser.js'
 import {
   AFFEvent,
   AFFItem,
@@ -41,8 +41,8 @@ import {
   AFFNestableItem,
   AFFTimingGroupKind,
   AFFErrorLevel
-} from './types'
-import { tokenTypes } from './lexer'
+} from './types.js'
+import { tokenTypes } from './lexer.js'
 
 // This pass generate AST from CST.
 // It will report errors for things that is valid in CST but not in AST.

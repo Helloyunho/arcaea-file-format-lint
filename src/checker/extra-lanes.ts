@@ -1,6 +1,6 @@
-import { EnwidenData, enwidens } from '../associated-data/enwiden'
-import { AFFChecker, AFFErrorLevel } from '../types'
-import { lowerBound, upperBound } from '../util/misc'
+import { EnwidenData, enwidens } from '../associated-data/enwiden.js'
+import { AFFChecker, AFFErrorLevel } from '../types.js'
+import { lowerBound, upperBound } from '../util/misc.js'
 
 export const extraLanesChecker: AFFChecker = (file, errors) => {
   const lanes = enwidens.get(file).lanes

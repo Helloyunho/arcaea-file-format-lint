@@ -1,4 +1,4 @@
-import { AFFChecker, AFFErrorLevel } from '../types'
+import { AFFChecker, AFFErrorLevel } from '../types.js'
 
 export const metadataChecker: AFFChecker = (file, errors) => {
   for (const entry of file.metadata.data.data.values()) {

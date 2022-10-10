@@ -5,8 +5,8 @@ import {
   WithLocation,
   AFFTimingGroupEvent,
   AFFErrorLevel
-} from '../types'
-import { AssociatedDataMap } from '../util/associated-data'
+} from '../types.js'
+import { AssociatedDataMap } from '../util/associated-data.js'
 
 export interface TimingData {
   time: number

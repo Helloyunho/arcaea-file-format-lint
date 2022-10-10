@@ -1,5 +1,5 @@
-import { AFFChecker } from '../types'
-import { timings } from '../associated-data/timing'
+import { AFFChecker } from '../types.js'
+import { timings } from '../associated-data/timing.js'
 
 export const timingChecker: AFFChecker = (file, error) => {
   error.splice(error.length, 0, ...timings.get(file).errors)

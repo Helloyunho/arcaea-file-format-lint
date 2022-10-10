@@ -1,8 +1,8 @@
-import { AFFLexer } from './lexer'
-import { affParser } from './parser'
-import { affToAST } from './to-ast'
-import { AFFError, AFFErrorLevel } from './types'
-import { processCheckers } from './checkers'
+import { AFFLexer } from './lexer.js'
+import { affParser } from './parser.js'
+import { affToAST } from './to-ast.js'
+import { AFFError, AFFErrorLevel } from './types.js'
+import { processCheckers } from './checkers.js'
 
 export const checkAFF = (content: string): AFFError[] => {
   const lexingResult = AFFLexer.tokenize(content)
