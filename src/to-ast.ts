@@ -398,6 +398,7 @@ const limitValuesCount = (
     // error: value count mismatch
     errors.push({
       message: `Event with type "${kind}" should have at most ${count} field(s) instead of ${values.length} field(s)`,
+      type: AFFErrorType.InvalidEventValueCount,
       location: valuesLocation,
       severity: AFFErrorLevel.Error
     })
@@ -417,6 +418,7 @@ const checkValuesCount = (
     // error: value count mismatch
     errors.push({
       message: `Event with type "${kind}" should have ${count} field(s) instead of ${values.length} field(s)`,
+      type: AFFErrorType.InvalidEventValueCount,
       location: valuesLocation,
       severity: AFFErrorLevel.Error
     })
@@ -438,6 +440,7 @@ const checkValueType = <T extends keyof AFFValues>(
     // error: value type mismatch
     errors.push({
       message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be "${kind}" instead of "${value.data.kind}"`,
+      type: AFFErrorType.InvalidEventValueType,
       location: values[id].location,
       severity: AFFErrorLevel.Error
     })
@@ -865,6 +868,7 @@ const transformArcSubevents = (
     if (event.kind !== 'arctap') {
       errors.push({
         message: `Type of subevent of event with type "arc" should be "arctap" instead of "${event.kind}"`,
+        type: AFFErrorType.ArcSubeventTypeMismatch,
         location: location,
         severity: AFFErrorLevel.Error
       })
@@ -885,6 +889,7 @@ const selectNestedItems = (
     if (item.kind === 'timinggroup') {
       errors.push({
         message: `Item of type "${item.kind}" cannot be nested in timinggroup`,
+        type: AFFErrorType.TimingGroupNestedItem,
         location: location,
         severity: AFFErrorLevel.Error
       })
@@ -913,6 +918,7 @@ const parseValue = {
           message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be one of ${[
             ...affTrackIds.values()
           ].join()}`,
+          type: AFFErrorType.InvalidTrackId,
           location,
           severity: AFFErrorLevel.Error
         })
@@ -943,6 +949,7 @@ const parseValue = {
           message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be one of ${[
             ...affColorIds.values()
           ].join()}`,
+          type: AFFErrorType.InvalidColorId,
           location,
           severity: AFFErrorLevel.Error
         })
@@ -970,6 +977,7 @@ const parseValue = {
           message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be one of ${[
             ...affArcKinds.values()
           ].join()}`,
+          type: AFFErrorType.InvalidArcKind,
           location,
           severity: AFFErrorLevel.Error
         })
@@ -1014,6 +1022,7 @@ const parseValue = {
           message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be one of ${[
             ...affBools.values()
           ].join()}`,
+          type: AFFErrorType.InvalidBool,
           location,
           severity: AFFErrorLevel.Error
         })
@@ -1041,6 +1050,7 @@ const parseValue = {
           message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be one of ${[
             ...affCameraKinds.values()
           ].join()}`,
+          type: AFFErrorType.InvalidCameraKind,
           location,
           severity: AFFErrorLevel.Error
         })
