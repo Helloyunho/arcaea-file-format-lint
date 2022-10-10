@@ -40,7 +40,8 @@ import {
   AFFTimingGroupEvent,
   AFFNestableItem,
   AFFTimingGroupKind,
-  AFFErrorLevel
+  AFFErrorLevel,
+  AFFErrorType
 } from './types.js'
 import { tokenTypes } from './lexer.js'
 
@@ -81,6 +82,7 @@ class ToASTVisitor
         // error: duplicated entry key
         errors.push({
           message: `"${key}" is defined twice in the metadata section`,
+          type: AFFErrorType.DuplicatedMetadataKey,
           location: entry.key.location,
           severity: AFFErrorLevel.Error,
           relatedInfo: [
@@ -232,6 +234,7 @@ class ToASTVisitor
         // error: unknown tag
         errors.push({
           message: `Unknown event type "${tag.image}"`,
+          type: AFFErrorType.UnknownEventType,
           location: locationFromToken(tag),
           severity: AFFErrorLevel.Error
         })
@@ -279,6 +282,7 @@ class ToASTVisitor
         //error: arctap should not be items
         errors.push({
           message: `Event with type "${event.kind}" should not be used as an item`,
+          type: AFFErrorType.InvalidEventAsItem,
           location: event.tagLocation,
           severity: AFFErrorLevel.Error
         })
@@ -339,6 +343,7 @@ const rejectSubevent = (
     // error: unexpected subevent
     errors.push({
       message: `Event with type "${kind}" should not have subevents`,
+      type: AFFErrorType.InvalidSubevent,
       location: subeventsLocation,
       severity: AFFErrorLevel.Error
     })
@@ -355,6 +360,7 @@ const rejectSegment = (
     // error: unexpected subevent
     errors.push({
       message: `Event with type "${kind}" should not have segment`,
+      type: AFFErrorType.InvalidSegment,
       location: segmentLocation,
       severity: AFFErrorLevel.Error
     })
@@ -372,6 +378,7 @@ const ensureValuesCount = (
     // error: value count mismatch
     errors.push({
       message: `Event with type "${kind}" should have at least ${count} field(s) instead of ${values.length} field(s)`,
+      type: AFFErrorType.InvalidEventValueCount,
       location: valuesLocation,
       severity: AFFErrorLevel.Error
     })

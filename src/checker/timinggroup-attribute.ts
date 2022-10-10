@@ -1,5 +1,5 @@
 import { timings } from '../associated-data/timing.js'
-import { AFFChecker, AFFErrorLevel } from '../types.js'
+import { AFFChecker, AFFErrorLevel, AFFErrorType } from '../types.js'
 
 export const timinggroupAttributeChecker: AFFChecker = (file, errors) => {
   for (const { data } of file.items) {
@@ -13,6 +13,7 @@ export const timinggroupAttributeChecker: AFFChecker = (file, errors) => {
           message: `Timinggroup event with attribute ${unknownAttribute
             .map((attr) => `"${attr}"`)
             .join(', ')} is not known by us`,
+          type: AFFErrorType.UnknownTimingGroup,
           location: data.timingGroupAttribute.location,
           severity: AFFErrorLevel.Warning
         })

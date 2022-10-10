@@ -192,8 +192,63 @@ export enum AFFErrorLevel {
   Error
 }
 
+export enum AFFErrorType {
+  MemeModeInfo,
+  DuplicatedState,
+  DuplicatedTiming,
+  NoTimingFound,
+  NoTimingAtZero,
+  FirstTimingNotZero,
+  ArcOutOfTrapezium,
+  ItemCutByTiming,
+  TapItemOutOfBound,
+  HoldItemOutOfBound,
+  FloatValueNotTwoDigits,
+  IgnoredMetadata,
+  NoAudioOffset,
+  InvalidAudioOffset,
+  TimingPointDensityFactorNotFloat,
+  TimingPointDensityFactorNotPositive,
+  DuplicatedArcTap,
+  OverlappedItem,
+  UnknownSceneControlEvent,
+  SceneControlValueCountMismatch,
+  SceneControlValueTypeMismatch,
+  UnknownTimingGroup,
+  NonZeroBPMNonZeroBeats,
+  ZeroBPMZeroBeats,
+  HoldPositiveDuration,
+  ArcNonNegativeDuration,
+  ArcZeroDurationDifferentPoints,
+  ArcZeroDurationSType,
+  ArcZeroDurationNoArctap,
+  ArcEffectUnknown,
+  ArcArctapNotSolid,
+  ArcSolidColor3,
+  ArcArctapInTimeRange,
+  CameraNonNegativeDuration,
+  TimestampNonNegative,
+  LexerError,
+  ParserError,
+  DuplicatedMetadataKey,
+  UnknownEventType,
+  InvalidEventAsItem,
+  InvalidSubevent,
+  InvalidSegment,
+  InvalidEventValueCount,
+  InvalidEventValueType,
+  ArcSubeventTypeMismatch,
+  TimingGroupNestedItem,
+  InvalidTrackId,
+  InvalidColorId,
+  InvalidArcKind,
+  InvalidBool,
+  InvalidCameraKind
+}
+
 export interface AFFError {
   message: string
+  type: AFFErrorType
   location: CstNodeLocation
   severity: AFFErrorLevel
   relatedInfo?: AFFErrorRelatedInfo[]

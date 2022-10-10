@@ -3,6 +3,7 @@ import {
   AFFChecker,
   AFFError,
   AFFErrorLevel,
+  AFFErrorType,
   AFFItem,
   WithLocation
 } from '../types.js'
@@ -85,6 +86,7 @@ const checkPoint = (
         message: `The ${tag} point of the ${
           solid ? 'solid' : 'tracking'
         } arc is out of the trapezium range`,
+        type: AFFErrorType.ArcOutOfTrapezium,
         severity: solid ? AFFErrorLevel.Warning : AFFErrorLevel.Info,
         location
       })
@@ -100,6 +102,7 @@ const checkPoint = (
         message: `The ${tag} point of the ${
           solid ? 'solid' : 'tracking'
         } arc is out of the trapezium range`,
+        type: AFFErrorType.ArcOutOfTrapezium,
         severity: solid ? AFFErrorLevel.Warning : AFFErrorLevel.Info,
         location
       })

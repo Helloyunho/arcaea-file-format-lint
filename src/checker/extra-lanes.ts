@@ -1,5 +1,5 @@
 import { EnwidenData, enwidens } from '../associated-data/enwiden.js'
-import { AFFChecker, AFFErrorLevel } from '../types.js'
+import { AFFChecker, AFFErrorLevel, AFFErrorType } from '../types.js'
 import { lowerBound, upperBound } from '../util/misc.js'
 
 export const extraLanesChecker: AFFChecker = (file, errors) => {
@@ -22,6 +22,7 @@ export const extraLanesChecker: AFFChecker = (file, errors) => {
         if (!(lanes[lastEnwidenlaneId]?.enabled ?? false)) {
           errors.push({
             message: `The tap item on the ${trackId.data.value} lane should not present when enwidenlanes is disabled`,
+            type: AFFErrorType.TapItemOutOfBound,
             severity: AFFErrorLevel.Error,
             location: trackId.location,
             relatedInfo: [
@@ -58,6 +59,7 @@ export const extraLanesChecker: AFFChecker = (file, errors) => {
         if (disabler.length > 0) {
           errors.push({
             message: `The hold item on the ${trackId.data.value} lane should not present when enwidenlanes is disabled`,
+            type: AFFErrorType.HoldItemOutOfBound,
             severity: AFFErrorLevel.Error,
             location: trackId.location,
             relatedInfo: disabler.map((lane) => ({

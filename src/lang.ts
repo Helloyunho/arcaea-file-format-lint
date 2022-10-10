@@ -1,7 +1,7 @@
 import { AFFLexer } from './lexer.js'
 import { affParser } from './parser.js'
 import { affToAST } from './to-ast.js'
-import { AFFError, AFFErrorLevel } from './types.js'
+import { AFFError, AFFErrorLevel, AFFErrorType } from './types.js'
 import { processCheckers } from './checkers.js'
 
 export const checkAFF = (content: string): AFFError[] => {
@@ -12,6 +12,7 @@ export const checkAFF = (content: string): AFFError[] => {
       lexingResult.errors.map((e) => ({
         severity: AFFErrorLevel.Error,
         message: e.message,
+        type: AFFErrorType.LexerError,
         location: {
           startOffset: e.offset,
           startLine: e.line,
@@ -32,6 +33,7 @@ export const checkAFF = (content: string): AFFError[] => {
       affParser.errors.map((e) => ({
         severity: AFFErrorLevel.Error,
         message: e.message,
+        type: AFFErrorType.ParserError,
         location: {
           startOffset: e.token.startOffset,
           startLine: e.token.startLine,

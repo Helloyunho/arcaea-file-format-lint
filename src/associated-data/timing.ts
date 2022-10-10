@@ -4,7 +4,8 @@ import {
   AFFError,
   WithLocation,
   AFFTimingGroupEvent,
-  AFFErrorLevel
+  AFFErrorLevel,
+  AFFErrorType
 } from '../types.js'
 import { AssociatedDataMap } from '../util/associated-data.js'
 
@@ -32,6 +33,7 @@ const genTimingResult = (
       if (datas.has(time)) {
         errors.push({
           message: `Another timing at this time is defined previously`,
+          type: AFFErrorType.DuplicatedTiming,
           severity: AFFErrorLevel.Error,
           location: item.location,
           relatedInfo: [
@@ -58,6 +60,7 @@ const genTimingResult = (
       message: `No timing event found ${
         'kind' in group ? 'in the timinggroup' : 'outside timinggroups'
       }`,
+      type: AFFErrorType.NoTimingFound,
       severity: AFFErrorLevel.Error,
       location: groupLocation
     })
@@ -66,6 +69,7 @@ const genTimingResult = (
       message: `No timing event at 0 time found ${
         'kind' in group ? 'in the timinggroup' : 'outside timinggroups'
       }`,
+      type: AFFErrorType.NoTimingAtZero,
       severity: AFFErrorLevel.Warning,
       location: groupLocation
     })
@@ -84,6 +88,7 @@ const genTimingResult = (
         message: `First item ${
           'kind' in group ? 'in the timinggroup' : 'outside timinggroups'
         } is not timing event at 0 time`,
+        type: AFFErrorType.FirstTimingNotZero,
         severity: AFFErrorLevel.Info,
         location: groupLocation
       })

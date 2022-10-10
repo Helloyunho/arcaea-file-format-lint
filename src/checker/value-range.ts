@@ -4,7 +4,8 @@ import {
   AFFError,
   WithLocation,
   AFFItem,
-  AFFErrorLevel
+  AFFErrorLevel,
+  AFFErrorType
 } from '../types.js'
 
 export const valueRangeChecker: AFFChecker = (file, errors) => {
@@ -22,6 +23,7 @@ const checkItem = (
     if (data.bpm.data.value !== 0 && data.measure.data.value === 0) {
       errors.push({
         message: `Timing event with non-zero bpm should not have zero beats per segment`,
+        type: AFFErrorType.NonZeroBPMNonZeroBeats,
         severity: AFFErrorLevel.Error,
         location: data.measure.location
       })
@@ -29,6 +31,7 @@ const checkItem = (
     if (data.bpm.data.value === 0 && data.measure.data.value !== 0) {
       errors.push({
         message: `Timing event with zero bpm should have zero beats per segment`,
+        type: AFFErrorType.ZeroBPMZeroBeats,
         severity: AFFErrorLevel.Info,
         location: data.measure.location
       })
@@ -41,6 +44,7 @@ const checkItem = (
     if (data.start.data.value >= data.end.data.value) {
       errors.push({
         message: `Hold event should have a positive time length`,
+        type: AFFErrorType.HoldPositiveDuration,
         severity: AFFErrorLevel.Error,
         location: location
       })
@@ -51,6 +55,7 @@ const checkItem = (
     if (data.start.data.value > data.end.data.value) {
       errors.push({
         message: `Arc event should have a non-negative time length`,
+        type: AFFErrorType.ArcNonNegativeDuration,
         severity: AFFErrorLevel.Error,
         location: location
       })
@@ -62,6 +67,7 @@ const checkItem = (
       ) {
         errors.push({
           message: `Arc event with zero time length should have different start point and end point`,
+          type: AFFErrorType.ArcZeroDurationDifferentPoints,
           severity: AFFErrorLevel.Error,
           location: location
         })
@@ -69,6 +75,7 @@ const checkItem = (
       if (data.arcKind.data.value !== 's') {
         errors.push({
           message: `Arc event with zero time length should be "s" type`,
+          type: AFFErrorType.ArcZeroDurationSType,
           severity: AFFErrorLevel.Info,
           location: data.arcKind.location
         })
@@ -76,6 +83,7 @@ const checkItem = (
       if (data.arctaps) {
         errors.push({
           message: `Arc event with zero time length should not have arctap events on it`,
+          type: AFFErrorType.ArcZeroDurationNoArctap,
           severity: AFFErrorLevel.Error,
           location: data.arctaps.location
         })
@@ -87,6 +95,7 @@ const checkItem = (
     ) {
       errors.push({
         message: `Arc event with effect "${data.effect.data.value}"  is not known by us`,
+        type: AFFErrorType.ArcEffectUnknown,
         severity: AFFErrorLevel.Warning,
         location: data.effect.location
       })
@@ -94,6 +103,7 @@ const checkItem = (
     if (!data.isLine.data.value && data.arctaps) {
       errors.push({
         message: `Arc event with arctap events on it will be treated as not solid even it is specified as solid`,
+        type: AFFErrorType.ArcArctapNotSolid,
         severity: AFFErrorLevel.Warning,
         location: data.isLine.location
       })
@@ -105,6 +115,7 @@ const checkItem = (
     ) {
       errors.push({
         message: `Solid arc event should not use the color 3`,
+        type: AFFErrorType.ArcSolidColor3,
         severity: AFFErrorLevel.Error,
         location: data.colorId.location
       })
@@ -117,6 +128,7 @@ const checkItem = (
         ) {
           errors.push({
             message: `Arctap event should happens in the time range of parent arc event`,
+            type: AFFErrorType.ArcArctapInTimeRange,
             severity: AFFErrorLevel.Error,
             location: arctap.location
           })
@@ -127,6 +139,7 @@ const checkItem = (
     if (data.duration.data.value < 0) {
       errors.push({
         message: `Camera event should have non negative duration`,
+        type: AFFErrorType.CameraNonNegativeDuration,
         severity: AFFErrorLevel.Error,
         location: data.duration.location
       })
@@ -145,6 +158,7 @@ const checkTimestamp = (
   if (timestamp.data.value < 0) {
     errors.push({
       message: `Timestamp should not be negative`,
+      type: AFFErrorType.TimestampNonNegative,
       severity: AFFErrorLevel.Error,
       location: timestamp.location
     })

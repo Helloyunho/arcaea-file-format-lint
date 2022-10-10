@@ -5,7 +5,8 @@ import {
   AFFValue,
   AFFError,
   AFFValues,
-  AFFErrorLevel
+  AFFErrorLevel,
+  AFFErrorType
 } from '../types.js'
 import { CstNodeLocation } from 'chevrotain'
 
@@ -54,6 +55,7 @@ const checkScenecontrol = (
   }
   error.push({
     message: `Scenecontrol event with type "${kind.data.value}" is not known by us, so the type of additional values is not checked`,
+    type: AFFErrorType.UnknownSceneControlEvent,
     location: kind.location,
     severity: AFFErrorLevel.Warning
   })
@@ -70,6 +72,7 @@ const checkValuesCount = (
     // error: value count mismatch
     errors.push({
       message: `Scenecontrol event with type "${kind}" should have ${count} additional value(s) instead of ${values.length} additional value(s)`,
+      type: AFFErrorType.SceneControlValueCountMismatch,
       location: valuesLocation,
       severity: AFFErrorLevel.Error
     })
@@ -91,6 +94,7 @@ const checkValueType = <T extends keyof AFFValues>(
     // error: value type mismatch
     errors.push({
       message: `The value in the "${fieldName}" field of scenecontrol event with type "${eventKind}" should be "${kind}" instead of "${value.data.kind}"`,
+      type: AFFErrorType.SceneControlValueTypeMismatch,
       location: values[id].location,
       severity: AFFErrorLevel.Error
     })
