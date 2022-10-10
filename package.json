@@ -1,0 +1,13 @@
+{
+	"name": "arcaea-file-formatter",
+	"description": "Format your Arcaea chart file.",
+	"license": "MIT",
+	"version": "0.1.0",
+	"repository": "github:Helloyunho/arcaea-file-formatter",
+	"engines": {
+		"node": "*"
+	},
+	"dependencies": {
+		"chevrotain": "^10.1.2"
+	}
+}

@@ -1,0 +1,44 @@
+Arguments: 
+  /Users/helloyunho/.nvm/versions/node/v18.9.0/bin/node /Users/helloyunho/.yarn/bin/yarn.js
+
+PATH: 
+  /Users/helloyunho/cocos2d-x-3.12/templates:/Users/helloyunho:/Users/helloyunho/cocos2d-x-3.12/tools/cocos2d-console/bin:/Users/helloyunho/.yarn/bin:/Users/helloyunho/.config/yarn/global/node_modules/.bin:/Users/helloyunho/.bun/bin:/opt/homebrew/opt/llvm/bin:/Users/helloyunho/miniforge3/condabin:/Users/helloyunho/.nvm/versions/node/v18.9.0/bin:/usr/local/opt/llvm/bin:/usr/local/opt/ncurses/bin:/Users/helloyunho/.cargo/bin:/usr/local/opt/openssl/bin:/Users/helloyunho/flutter/bin:/Users/helloyunho/.deno/bin:/usr/local/opt/openjdk/bin:/Users/helloyunho/Dev_etc/depot_tools:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/Wireshark.app/Contents/MacOS:/Users/helloyunho/.cargo/bin:/Users/helloyunho/.fig/bin:/Users/helloyunho/.local/bin:/Users/helloyunho/Library/Application Support/JetBrains/Toolbox/scripts:/Users/helloyunho/.local/share/fig/plugins/tumult.plugin.zsh_unixorn/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.9.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  SyntaxError: /Users/helloyunho/Dev_etc/Arcaea-debug/arcaea-file-formatter/package.json: Unexpected token } in JSON at position 263
+      at JSON.parse (<anonymous>)
+      at /Users/helloyunho/.yarn/lib/cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (/Users/helloyunho/.yarn/lib/cli.js:310:30)
+      at /Users/helloyunho/.yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+  	"name": "arcaea-file-formatter",
+  	"description": "Format your Arcaea chart file.",
+  	"license": "MIT",
+  	"version": "0.1.0",
+  	"repository": "github:Helloyunho/arcaea-file-formatter",
+  	"engines": {
+  		"node": "*"
+  	},
+  	"dependencies": {
+  		"chevrotain": "^10.1.2",
+  	}
+  }
+  ``
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
