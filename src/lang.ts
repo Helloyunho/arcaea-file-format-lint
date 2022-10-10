@@ -1,10 +1,21 @@
 import { AFFLexer } from './lexer.js'
 import { affParser } from './parser.js'
 import { affToAST } from './to-ast.js'
-import { AFFError, AFFErrorLevel, AFFErrorType } from './types.js'
+import { AFFError, AFFErrorLevel, AFFErrorType, AFFFile } from './types.js'
 import { processCheckers } from './checkers.js'
 
-export const checkAFF = (content: string): AFFError[] => {
+export const checkAFF = (
+  content: string
+): [
+  AFFError[],
+  (
+    | {
+        ast: AFFFile
+        errors: AFFError[]
+      }
+    | undefined
+  )
+] => {
   const lexingResult = AFFLexer.tokenize(content)
   let errors: AFFError[] = []
   if (lexingResult.errors.length > 0) {
@@ -49,6 +60,7 @@ export const checkAFF = (content: string): AFFError[] => {
     errors = errors.concat(astResult.errors)
     const checkerErrors = processCheckers(astResult.ast)
     errors = errors.concat(checkerErrors)
+    return [errors, astResult]
   }
-  return errors
+  return [errors, undefined]
 }
