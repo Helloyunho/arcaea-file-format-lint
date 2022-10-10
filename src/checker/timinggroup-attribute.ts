@@ -1,5 +1,5 @@
 import { timings } from '../associated-data/timing'
-import { AFFChecker } from '../types'
+import { AFFChecker, AFFErrorLevel } from '../types'
 
 export const timinggroupAttributeChecker: AFFChecker = (file, errors) => {
   for (const { data } of file.items) {
@@ -14,7 +14,7 @@ export const timinggroupAttributeChecker: AFFChecker = (file, errors) => {
             .map((attr) => `"${attr}"`)
             .join(', ')} is not known by us`,
           location: data.timingGroupAttribute.location,
-          severity: DiagnosticSeverity.Warning
+          severity: AFFErrorLevel.Warning
         })
       }
     }

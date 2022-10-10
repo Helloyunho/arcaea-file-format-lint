@@ -1,4 +1,10 @@
-import { AFFError, AFFFile, AFFSceneControlEvent, WithLocation } from '../types'
+import {
+  AFFError,
+  AFFErrorLevel,
+  AFFFile,
+  AFFSceneControlEvent,
+  WithLocation
+} from '../types'
 import { AssociatedDataMap } from '../util/associated-data'
 
 export interface EnwidenData {
@@ -66,7 +72,7 @@ const genEnwidenResult = (file: AFFFile): EnwidenResult => {
         const enabledString = enabled ? 'enabled' : 'disabled'
         errors.push({
           message: `The ${type} state is already ${enabledString}, you can't make it ${enabledString} again`,
-          severity: DiagnosticSeverity.Warning,
+          severity: AFFErrorLevel.Warning,
           location: data.item.data.values.data[1].location,
           relatedInfo: [
             {

@@ -39,7 +39,8 @@ import {
   AFFSceneControlKind,
   AFFTimingGroupEvent,
   AFFNestableItem,
-  AFFTimingGroupKind
+  AFFTimingGroupKind,
+  AFFErrorLevel
 } from './types'
 import { tokenTypes } from './lexer'
 
@@ -81,7 +82,7 @@ class ToASTVisitor
         errors.push({
           message: `"${key}" is defined twice in the metadata section`,
           location: entry.key.location,
-          severity: DiagnosticSeverity.Error,
+          severity: AFFErrorLevel.Error,
           relatedInfo: [
             {
               message: 'Previous defination',
@@ -232,7 +233,7 @@ class ToASTVisitor
         errors.push({
           message: `Unknown event type "${tag.image}"`,
           location: locationFromToken(tag),
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }
@@ -279,7 +280,7 @@ class ToASTVisitor
         errors.push({
           message: `Event with type "${event.kind}" should not be used as an item`,
           location: event.tagLocation,
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }
@@ -339,7 +340,7 @@ const rejectSubevent = (
     errors.push({
       message: `Event with type "${kind}" should not have subevents`,
       location: subeventsLocation,
-      severity: DiagnosticSeverity.Error
+      severity: AFFErrorLevel.Error
     })
   }
 }
@@ -355,7 +356,7 @@ const rejectSegment = (
     errors.push({
       message: `Event with type "${kind}" should not have segment`,
       location: segmentLocation,
-      severity: DiagnosticSeverity.Error
+      severity: AFFErrorLevel.Error
     })
   }
 }
@@ -372,7 +373,7 @@ const ensureValuesCount = (
     errors.push({
       message: `Event with type "${kind}" should have at least ${count} field(s) instead of ${values.length} field(s)`,
       location: valuesLocation,
-      severity: DiagnosticSeverity.Error
+      severity: AFFErrorLevel.Error
     })
     return false
   }
@@ -391,7 +392,7 @@ const limitValuesCount = (
     errors.push({
       message: `Event with type "${kind}" should have at most ${count} field(s) instead of ${values.length} field(s)`,
       location: valuesLocation,
-      severity: DiagnosticSeverity.Error
+      severity: AFFErrorLevel.Error
     })
     return false
   }
@@ -410,7 +411,7 @@ const checkValuesCount = (
     errors.push({
       message: `Event with type "${kind}" should have ${count} field(s) instead of ${values.length} field(s)`,
       location: valuesLocation,
-      severity: DiagnosticSeverity.Error
+      severity: AFFErrorLevel.Error
     })
     return false
   }
@@ -431,7 +432,7 @@ const checkValueType = <T extends keyof AFFValues>(
     errors.push({
       message: `The value in the "${fieldName}" field of event with type "${eventKind}" should be "${kind}" instead of "${value.data.kind}"`,
       location: values[id].location,
-      severity: DiagnosticSeverity.Error
+      severity: AFFErrorLevel.Error
     })
     return null
   } else {
@@ -858,7 +859,7 @@ const transformArcSubevents = (
       errors.push({
         message: `Type of subevent of event with type "arc" should be "arctap" instead of "${event.kind}"`,
         location: location,
-        severity: DiagnosticSeverity.Error
+        severity: AFFErrorLevel.Error
       })
     } else {
       arctaps.push({ location, data: event })
@@ -878,7 +879,7 @@ const selectNestedItems = (
       errors.push({
         message: `Item of type "${item.kind}" cannot be nested in timinggroup`,
         location: location,
-        severity: DiagnosticSeverity.Error
+        severity: AFFErrorLevel.Error
       })
     } else {
       items.push({ location, data: item } as WithLocation<AFFNestableItem>)
@@ -906,7 +907,7 @@ const parseValue = {
             ...affTrackIds.values()
           ].join()}`,
           location,
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }
@@ -936,7 +937,7 @@ const parseValue = {
             ...affColorIds.values()
           ].join()}`,
           location,
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }
@@ -963,7 +964,7 @@ const parseValue = {
             ...affArcKinds.values()
           ].join()}`,
           location,
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }
@@ -1007,7 +1008,7 @@ const parseValue = {
             ...affBools.values()
           ].join()}`,
           location,
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }
@@ -1034,7 +1035,7 @@ const parseValue = {
             ...affCameraKinds.values()
           ].join()}`,
           location,
-          severity: DiagnosticSeverity.Error
+          severity: AFFErrorLevel.Error
         })
         return null
       }

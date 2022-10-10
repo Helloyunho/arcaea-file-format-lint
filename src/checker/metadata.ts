@@ -1,4 +1,4 @@
-import { AFFChecker } from '../types'
+import { AFFChecker, AFFErrorLevel } from '../types'
 
 export const metadataChecker: AFFChecker = (file, errors) => {
   for (const entry of file.metadata.data.data.values()) {
@@ -7,7 +7,7 @@ export const metadataChecker: AFFChecker = (file, errors) => {
     ) {
       errors.push({
         message: `The "${entry.data.key.data}" metadata is not used and will be ignored`,
-        severity: DiagnosticSeverity.Warning,
+        severity: AFFErrorLevel.Warning,
         location: entry.data.key.location
       })
     }
@@ -15,7 +15,7 @@ export const metadataChecker: AFFChecker = (file, errors) => {
   if (!file.metadata.data.data.has('AudioOffset')) {
     errors.push({
       message: `The "AudioOffset" metadata is missing, this chart will be processed with zero audio offset`,
-      severity: DiagnosticSeverity.Warning,
+      severity: AFFErrorLevel.Warning,
       location: file.metadata.data.metaEndLocation
     })
   } else {
@@ -23,7 +23,7 @@ export const metadataChecker: AFFChecker = (file, errors) => {
     if (!offset.data.value.data.match(/^-?(?:0|[1-9][0-9]*)$/)) {
       errors.push({
         message: `The value of "AudioOffset" metadata is not an int`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: offset.data.value.location
       })
     }
@@ -34,13 +34,13 @@ export const metadataChecker: AFFChecker = (file, errors) => {
     if (isNaN(factorValue)) {
       errors.push({
         message: `The value of "TimingPointDensityFactor" metadata is not an float`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: factor.data.value.location
       })
     } else if (factorValue <= 0) {
       errors.push({
         message: `The value of "TimingPointDensityFactor" metadata is not positive`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: factor.data.value.location
       })
     }

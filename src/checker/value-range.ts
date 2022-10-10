@@ -1,4 +1,11 @@
-import { AFFChecker, AFFInt, AFFError, WithLocation, AFFItem } from '../types'
+import {
+  AFFChecker,
+  AFFInt,
+  AFFError,
+  WithLocation,
+  AFFItem,
+  AFFErrorLevel
+} from '../types'
 
 export const valueRangeChecker: AFFChecker = (file, errors) => {
   for (const item of file.items) {
@@ -15,14 +22,14 @@ const checkItem = (
     if (data.bpm.data.value !== 0 && data.measure.data.value === 0) {
       errors.push({
         message: `Timing event with non-zero bpm should not have zero beats per segment`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: data.measure.location
       })
     }
     if (data.bpm.data.value === 0 && data.measure.data.value !== 0) {
       errors.push({
         message: `Timing event with zero bpm should have zero beats per segment`,
-        severity: DiagnosticSeverity.Information,
+        severity: AFFErrorLevel.Info,
         location: data.measure.location
       })
     }
@@ -34,7 +41,7 @@ const checkItem = (
     if (data.start.data.value >= data.end.data.value) {
       errors.push({
         message: `Hold event should have a positive time length`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: location
       })
     }
@@ -44,7 +51,7 @@ const checkItem = (
     if (data.start.data.value > data.end.data.value) {
       errors.push({
         message: `Arc event should have a non-negative time length`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: location
       })
     }
@@ -55,21 +62,21 @@ const checkItem = (
       ) {
         errors.push({
           message: `Arc event with zero time length should have different start point and end point`,
-          severity: DiagnosticSeverity.Error,
+          severity: AFFErrorLevel.Error,
           location: location
         })
       }
       if (data.arcKind.data.value !== 's') {
         errors.push({
           message: `Arc event with zero time length should be "s" type`,
-          severity: DiagnosticSeverity.Information,
+          severity: AFFErrorLevel.Info,
           location: data.arcKind.location
         })
       }
       if (data.arctaps) {
         errors.push({
           message: `Arc event with zero time length should not have arctap events on it`,
-          severity: DiagnosticSeverity.Error,
+          severity: AFFErrorLevel.Error,
           location: data.arctaps.location
         })
       }
@@ -80,14 +87,14 @@ const checkItem = (
     ) {
       errors.push({
         message: `Arc event with effect "${data.effect.data.value}"  is not known by us`,
-        severity: DiagnosticSeverity.Warning,
+        severity: AFFErrorLevel.Warning,
         location: data.effect.location
       })
     }
     if (!data.isLine.data.value && data.arctaps) {
       errors.push({
         message: `Arc event with arctap events on it will be treated as not solid even it is specified as solid`,
-        severity: DiagnosticSeverity.Warning,
+        severity: AFFErrorLevel.Warning,
         location: data.isLine.location
       })
     }
@@ -98,7 +105,7 @@ const checkItem = (
     ) {
       errors.push({
         message: `Solid arc event should not use the color 3`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: data.colorId.location
       })
     }
@@ -110,7 +117,7 @@ const checkItem = (
         ) {
           errors.push({
             message: `Arctap event should happens in the time range of parent arc event`,
-            severity: DiagnosticSeverity.Error,
+            severity: AFFErrorLevel.Error,
             location: arctap.location
           })
         }
@@ -120,7 +127,7 @@ const checkItem = (
     if (data.duration.data.value < 0) {
       errors.push({
         message: `Camera event should have non negative duration`,
-        severity: DiagnosticSeverity.Error,
+        severity: AFFErrorLevel.Error,
         location: data.duration.location
       })
     }
@@ -138,7 +145,7 @@ const checkTimestamp = (
   if (timestamp.data.value < 0) {
     errors.push({
       message: `Timestamp should not be negative`,
-      severity: DiagnosticSeverity.Error,
+      severity: AFFErrorLevel.Error,
       location: timestamp.location
     })
   }

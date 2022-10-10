@@ -1,7 +1,7 @@
 import { CstNodeLocation } from 'chevrotain'
 import { timings, TimingData } from '../associated-data/timing'
 import { lowerBound, upperBound } from '../util/misc'
-import { AFFChecker, AFFError } from '../types'
+import { AFFChecker, AFFError, AFFErrorLevel } from '../types'
 
 export const cutByTimingChecker: AFFChecker = (file, error) => {
   const timingData = timings.get(file).datas
@@ -65,7 +65,7 @@ const checkCutByTiming = (
   if (cuters.length > 0) {
     error.push({
       message: `The ${tag} item is cut by timing events`,
-      severity: DiagnosticSeverity.Information,
+      severity: AFFErrorLevel.Info,
       location,
       relatedInfo: cuters.map((timing) => ({
         message: `The timing event that cuts the ${tag} item`,

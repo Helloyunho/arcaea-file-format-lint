@@ -1,4 +1,10 @@
-import { AFFError, AFFFile, WithLocation, AFFItem } from '../types'
+import {
+  AFFError,
+  AFFFile,
+  WithLocation,
+  AFFItem,
+  AFFErrorLevel
+} from '../types'
 import { AssociatedDataMap } from '../util/associated-data'
 import { timings } from './timing'
 
@@ -25,7 +31,7 @@ const genAllowMemesResult = (file: AFFFile): AllowMemesResult => {
       {
         message:
           'Allow memes mode is turned on since memes events present, some checks will be skipped',
-        severity: DiagnosticSeverity.Hint,
+        severity: AFFErrorLevel.Info,
         location: file.metadata.data.metaEndLocation,
         relatedInfo: [
           {

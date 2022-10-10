@@ -1,5 +1,5 @@
 import { EnwidenData, enwidens } from '../associated-data/enwiden'
-import { AFFChecker } from '../types'
+import { AFFChecker, AFFErrorLevel } from '../types'
 import { lowerBound, upperBound } from '../util/misc'
 
 export const extraLanesChecker: AFFChecker = (file, errors) => {
@@ -22,7 +22,7 @@ export const extraLanesChecker: AFFChecker = (file, errors) => {
         if (!(lanes[lastEnwidenlaneId]?.enabled ?? false)) {
           errors.push({
             message: `The tap item on the ${trackId.data.value} lane should not present when enwidenlanes is disabled`,
-            severity: DiagnosticSeverity.Error,
+            severity: AFFErrorLevel.Error,
             location: trackId.location,
             relatedInfo: [
               {
@@ -58,7 +58,7 @@ export const extraLanesChecker: AFFChecker = (file, errors) => {
         if (disabler.length > 0) {
           errors.push({
             message: `The hold item on the ${trackId.data.value} lane should not present when enwidenlanes is disabled`,
-            severity: DiagnosticSeverity.Error,
+            severity: AFFErrorLevel.Error,
             location: trackId.location,
             relatedInfo: disabler.map((lane) => ({
               message: `The scenecontrol event that disable enwidenlanes`,

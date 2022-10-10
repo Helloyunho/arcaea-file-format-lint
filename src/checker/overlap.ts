@@ -8,7 +8,8 @@ import {
   AFFCameraEvent,
   AFFItem,
   AFFSceneControlEvent,
-  AFFFloat
+  AFFFloat,
+  AFFErrorLevel
 } from '../types'
 import { timings } from '../associated-data/timing'
 
@@ -27,7 +28,7 @@ export const overlapChecker: AFFChecker = (file, error) => {
           if (timestamps.has(timestamp)) {
             error.push({
               message: `The arctap is duplicated with previous arctap`,
-              severity: DiagnosticSeverity.Error,
+              severity: AFFErrorLevel.Error,
               location: arctap.location,
               relatedInfo: [
                 {
@@ -124,7 +125,7 @@ const checkTrackOverlap = (
   const report = (location: CstNodeLocation, lastLocation: CstNodeLocation) => {
     error.push({
       message: `The track item is overlapped with a previous track item`,
-      severity: DiagnosticSeverity.Error,
+      severity: AFFErrorLevel.Error,
       location,
       relatedInfo: [
         {
@@ -172,7 +173,7 @@ const checkCameraOverlap = (
   const report = (location: CstNodeLocation, lastLocation: CstNodeLocation) => {
     error.push({
       message: `The camera item is overlapped with a previous camera item`,
-      severity: DiagnosticSeverity.Warning,
+      severity: AFFErrorLevel.Warning,
       location,
       relatedInfo: [
         {
@@ -208,7 +209,7 @@ const checkScenecontrolOverlap = (
   const report = (location: CstNodeLocation, lastLocation: CstNodeLocation) => {
     error.push({
       message: `The scenecontrol item with kind "${kind}" is overlapped with a previous scenecontrol item with kind "${kind}"`,
-      severity: DiagnosticSeverity.Warning,
+      severity: AFFErrorLevel.Warning,
       location,
       relatedInfo: [
         {

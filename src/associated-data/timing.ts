@@ -3,7 +3,8 @@ import {
   AFFFile,
   AFFError,
   WithLocation,
-  AFFTimingGroupEvent
+  AFFTimingGroupEvent,
+  AFFErrorLevel
 } from '../types'
 import { AssociatedDataMap } from '../util/associated-data'
 
@@ -31,7 +32,7 @@ const genTimingResult = (
       if (datas.has(time)) {
         errors.push({
           message: `Another timing at this time is defined previously`,
-          severity: DiagnosticSeverity.Error,
+          severity: AFFErrorLevel.Error,
           location: item.location,
           relatedInfo: [
             {
@@ -57,7 +58,7 @@ const genTimingResult = (
       message: `No timing event found ${
         'kind' in group ? 'in the timinggroup' : 'outside timinggroups'
       }`,
-      severity: DiagnosticSeverity.Error,
+      severity: AFFErrorLevel.Error,
       location: groupLocation
     })
   } else if (!datas.has(0)) {
@@ -65,7 +66,7 @@ const genTimingResult = (
       message: `No timing event at 0 time found ${
         'kind' in group ? 'in the timinggroup' : 'outside timinggroups'
       }`,
-      severity: DiagnosticSeverity.Warning,
+      severity: AFFErrorLevel.Warning,
       location: groupLocation
     })
   } else {
@@ -83,7 +84,7 @@ const genTimingResult = (
         message: `First item ${
           'kind' in group ? 'in the timinggroup' : 'outside timinggroups'
         } is not timing event at 0 time`,
-        severity: DiagnosticSeverity.Information,
+        severity: AFFErrorLevel.Info,
         location: groupLocation
       })
     }

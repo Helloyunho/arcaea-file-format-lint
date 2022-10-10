@@ -186,10 +186,16 @@ export interface AFFErrorRelatedInfo {
   location: CstNodeLocation
 }
 
+export enum AFFErrorLevel {
+  Info,
+  Warning,
+  Error
+}
+
 export interface AFFError {
   message: string
   location: CstNodeLocation
-  severity: DiagnosticSeverity
+  severity: AFFErrorLevel
   relatedInfo?: AFFErrorRelatedInfo[]
 }
 

@@ -1,4 +1,11 @@
-import { AFFChecker, AFFFloat, AFFError, WithLocation, AFFItem } from '../types'
+import {
+  AFFChecker,
+  AFFFloat,
+  AFFError,
+  WithLocation,
+  AFFItem,
+  AFFErrorLevel
+} from '../types'
 
 export const floatDigitChecker: AFFChecker = (file, errors) => {
   for (const item of file.items) {
@@ -42,7 +49,7 @@ const checkFloat = (float: WithLocation<AFFFloat>, errors: AFFError[]) => {
   if (float.data.digit !== 2) {
     errors.push({
       message: `Float values should have exact 2 digits in its fractional part`,
-      severity: DiagnosticSeverity.Warning,
+      severity: AFFErrorLevel.Warning,
       location: float.location
     })
   }
