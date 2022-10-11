@@ -1,8 +1,9 @@
 import { checkAFF } from './lang.js'
 import chalk, { Chalk } from 'chalk'
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import meow from 'meow'
-import { AFFErrorLevel } from './types.js'
+import { AFFErrorLevel, AFFErrorType } from './types.js'
+import { ToScript } from './to-script.js'
 
 const args = meow(
   `
@@ -22,10 +23,17 @@ const args = meow(
   }
 )
 
-const main = async (files: string[], { fix: boolean }) => {
+const main = async (files: string[], { fix }: { fix: boolean }) => {
   for (const file of files) {
+    if (fix) {
+      const content = await readFile(file, 'utf-8')
+      const [errors, ast] = checkAFF(content)
+      const toScript = new ToScript()
+      const fixedContent = await toScript.readFile(ast)
+      await writeFile(file, fixedContent)
+    }
     const content = await readFile(file, 'utf-8')
-    const errors = checkAFF(content)
+    const [errors] = checkAFF(content)
     for (const error of errors) {
       let chalkColor: Chalk
       let level: string

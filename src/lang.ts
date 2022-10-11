@@ -6,16 +6,7 @@ import { processCheckers } from './checkers.js'
 
 export const checkAFF = (
   content: string
-): [
-  AFFError[],
-  (
-    | {
-        ast: AFFFile
-        errors: AFFError[]
-      }
-    | undefined
-  )
-] => {
+): [AFFError[], AFFFile | undefined] => {
   const lexingResult = AFFLexer.tokenize(content)
   let errors: AFFError[] = []
   if (lexingResult.errors.length > 0) {
@@ -60,7 +51,7 @@ export const checkAFF = (
     errors = errors.concat(astResult.errors)
     const checkerErrors = processCheckers(astResult.ast)
     errors = errors.concat(checkerErrors)
-    return [errors, astResult]
+    return [errors, astResult.ast]
   }
   return [errors, undefined]
 }
