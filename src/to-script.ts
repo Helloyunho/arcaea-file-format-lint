@@ -30,7 +30,23 @@ import {
 } from './types'
 
 export class ToScript {
-  constructor() {}
+  fixOffsets: {
+    start: number
+    end: number
+    delete?: boolean
+    replace?: any
+  }[]
+
+  constructor(
+    fixOffsets?: {
+      start: number
+      end: number
+      delete?: boolean
+      replace?: any
+    }[]
+  ) {
+    this.fixOffsets = fixOffsets ?? []
+  }
 
   readFile(ast: AFFFile) {
     const metadata = this.readMetadata(this.removeLocation(ast.metadata))

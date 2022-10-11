@@ -28,6 +28,12 @@ const main = async (files: string[], { fix }: { fix: boolean }) => {
     if (fix) {
       const content = await readFile(file, 'utf-8')
       const [errors, ast] = checkAFF(content)
+      if (errors.length > 0) {
+        for (const error of errors) {
+          // switch (error.type) {
+          // }
+        }
+      }
       const toScript = new ToScript()
       const fixedContent = await toScript.readFile(ast)
       await writeFile(file, fixedContent)
@@ -52,8 +58,8 @@ const main = async (files: string[], { fix }: { fix: boolean }) => {
           break
       }
       console.log(
-        chalkColor.bold(level) +
-          `: ${file}:${error.location.startLine}:${error.location.startColumn} ${error.message}`
+        chalkColor.bold(level + ':') +
+          ` ${file}:${error.location.startLine}:${error.location.startColumn} ${error.message}`
       )
     }
   }
