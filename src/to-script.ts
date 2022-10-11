@@ -48,27 +48,55 @@ export class ToScript {
     this.fixOffsets = fixOffsets ?? []
   }
 
-  readFile(ast: AFFFile) {
-    const metadata = this.readMetadata(this.removeLocation(ast.metadata))
-    const items = ast.items.map((item) =>
-      this.readItem(this.removeLocation(item))
+  checkPatch<T>(patch: WithLocation<T>, error: true): T
+  checkPatch<T>(patch: WithLocation<T>, error: false): T | undefined
+  checkPatch<T>(patch: WithLocation<T>): T | undefined
+  checkPatch<T>(patch: WithLocation<T>, error: boolean = false): T | undefined {
+    const { startOffset, endOffset } = patch.location
+    const fix = this.fixOffsets.find(
+      (fix) => fix.start === startOffset && fix.end === endOffset
     )
+    if (fix) {
+      if (fix.delete) {
+        if (error) {
+          throw new Error(`Unexpected delete patch: ${patch}`)
+        } else {
+          return undefined
+        }
+      } else {
+        return fix.replace
+      }
+    }
+    return patch.data
+  }
+
+  readFile(ast: AFFFile) {
+    const metadata = this.readMetadata(this.checkPatch(ast.metadata))
+    const items = []
+    for (const item of ast.items) {
+      const patched = this.checkPatch(item)
+      if (patched) {
+        items.push(this.readEvent(patched))
+      }
+    }
     return `${metadata}\n-\n${items.join('\n')}`
   }
 
-  removeLocation<T>(node: WithLocation<T>): T {
-    return node.data
-  }
-
   readMetadata(metadata: AFFMetadata) {
-    const entries = Array.from(metadata.data.values()).map((entry) =>
-      this.readMetadataEntry(this.removeLocation(entry))
-    )
+    const entries = []
+    for (const entry of metadata.data.values()) {
+      const patched = this.checkPatch(entry)
+      if (patched) {
+        entries.push(this.readMetadataEntry(patched))
+      }
+    }
     return `${entries.join('\n')}`
   }
 
   readMetadataEntry(entry: AFFMetadataEntry) {
-    return `${entry.key.data}:${entry.value.data}`
+    const key = this.checkPatch(entry.key, true)
+    const value = this.checkPatch(entry.value, true)
+    return `${key}:${value}`
   }
 
   readTrackItem(item: AFFTrackItem) {
@@ -112,9 +140,9 @@ export class ToScript {
   }
 
   readTiming(timing: AFFTimingEvent) {
-    const time = this.readInt(this.removeLocation(timing.time))
-    const bpm = this.readFloat(this.removeLocation(timing.bpm))
-    const measure = this.readFloat(this.removeLocation(timing.measure))
+    const time = this.readInt(this.checkPatch(timing.time, true))
+    const bpm = this.readFloat(this.checkPatch(timing.bpm, true))
+    const measure = this.readFloat(this.checkPatch(timing.measure, true))
     return `timing(${time},${bpm},${measure});`
   }
 
@@ -131,36 +159,40 @@ export class ToScript {
   }
 
   readTap(tap: AFFTapEvent) {
-    const time = this.readInt(this.removeLocation(tap.time))
-    const trackId = this.readTrackID(this.removeLocation(tap.trackId))
+    const time = this.readInt(this.checkPatch(tap.time, true))
+    const trackId = this.readTrackID(this.checkPatch(tap.trackId, true))
     return `(${time},${trackId});`
   }
 
   readHold(hold: AFFHoldEvent) {
-    const start = this.readInt(this.removeLocation(hold.start))
-    const end = this.readInt(this.removeLocation(hold.end))
-    const trackId = this.readTrackID(this.removeLocation(hold.trackId))
+    const start = this.readInt(this.checkPatch(hold.start, true))
+    const end = this.readInt(this.checkPatch(hold.end, true))
+    const trackId = this.readTrackID(this.checkPatch(hold.trackId, true))
     return `hold(${start},${end},${trackId});`
   }
 
   readArc(arc: AFFArcEvent) {
-    const start = this.readInt(this.removeLocation(arc.start))
-    const end = this.readInt(this.removeLocation(arc.end))
-    const xStart = this.readFloat(this.removeLocation(arc.xStart))
-    const xEnd = this.readFloat(this.removeLocation(arc.xEnd))
-    const arcKind = this.readArcKind(this.removeLocation(arc.arcKind))
-    const yStart = this.readFloat(this.removeLocation(arc.yStart))
-    const yEnd = this.readFloat(this.removeLocation(arc.yEnd))
-    const colorId = this.readColorID(this.removeLocation(arc.colorId))
-    const effect = this.readEffect(this.removeLocation(arc.effect))
-    const isLine = this.readBool(this.removeLocation(arc.isLine))
-    const arctaps = arc.arctaps
-      ? this.removeLocation(arc.arctaps).map((arctap) =>
-          this.readArctap(this.removeLocation(arctap))
-        )
-      : undefined
+    const start = this.readInt(this.checkPatch(arc.start, true))
+    const end = this.readInt(this.checkPatch(arc.end, true))
+    const xStart = this.readFloat(this.checkPatch(arc.xStart, true))
+    const xEnd = this.readFloat(this.checkPatch(arc.xEnd, true))
+    const arcKind = this.readArcKind(this.checkPatch(arc.arcKind, true))
+    const yStart = this.readFloat(this.checkPatch(arc.yStart, true))
+    const yEnd = this.readFloat(this.checkPatch(arc.yEnd, true))
+    const colorId = this.readColorID(this.checkPatch(arc.colorId, true))
+    const effect = this.readEffect(this.checkPatch(arc.effect, true))
+    const isLine = this.readBool(this.checkPatch(arc.isLine, true))
+    const arctaps = []
+    if (arc.arctaps) {
+      for (const arctap of this.checkPatch(arc.arctaps)) {
+        const patched = this.checkPatch(arctap)
+        if (patched) {
+          arctaps.push(this.readArctap(patched))
+        }
+      }
+    }
     return `arc(${start},${end},${xStart},${xEnd},${arcKind},${yStart},${yEnd},${colorId},${effect},${isLine})${
-      arctaps !== undefined ? `[${arctaps.join(',')}]` : ''
+      arctaps.length !== 0 ? `[${arctaps.join(',')}]` : ''
     };`
   }
 
@@ -185,28 +217,28 @@ export class ToScript {
   }
 
   readArctap(arctap: AFFArctapEvent) {
-    const time = this.readInt(this.removeLocation(arctap.time))
+    const time = this.readInt(this.checkPatch(arctap.time, true))
     return `arctap(${time})`
   }
 
   readCamera(camera: AFFCameraEvent) {
-    const time = this.readInt(this.removeLocation(camera.time))
+    const time = this.readInt(this.checkPatch(camera.time, true))
     const translationX = this.readFloat(
-      this.removeLocation(camera.translationX)
+      this.checkPatch(camera.translationX, true)
     )
     const translationY = this.readFloat(
-      this.removeLocation(camera.translationY)
+      this.checkPatch(camera.translationY, true)
     )
     const translationZ = this.readFloat(
-      this.removeLocation(camera.translationZ)
+      this.checkPatch(camera.translationZ, true)
     )
-    const rotationX = this.readFloat(this.removeLocation(camera.rotationX))
-    const rotationY = this.readFloat(this.removeLocation(camera.rotationY))
-    const rotationZ = this.readFloat(this.removeLocation(camera.rotationZ))
+    const rotationX = this.readFloat(this.checkPatch(camera.rotationX, true))
+    const rotationY = this.readFloat(this.checkPatch(camera.rotationY, true))
+    const rotationZ = this.readFloat(this.checkPatch(camera.rotationZ, true))
     const cameraKind = this.readCameraKind(
-      this.removeLocation(camera.cameraKind)
+      this.checkPatch(camera.cameraKind, true)
     )
-    const duration = this.readInt(this.removeLocation(camera.duration))
+    const duration = this.readInt(this.checkPatch(camera.duration, true))
     return `camera(${time},${translationX},${translationY},${translationZ},${rotationX},${rotationY},${rotationZ},${cameraKind},${duration});`
   }
 
@@ -227,13 +259,17 @@ export class ToScript {
   }
 
   readSceneControl(sceneControl: AFFSceneControlEvent) {
-    const time = this.readInt(this.removeLocation(sceneControl.time))
+    const time = this.readInt(this.checkPatch(sceneControl.time, true))
     const sceneControlKind = this.readSceneControlKind(
-      this.removeLocation(sceneControl.sceneControlKind)
+      this.checkPatch(sceneControl.sceneControlKind, true)
     )
-    const values = this.removeLocation(sceneControl.values).map((value) =>
-      this.readValue(this.removeLocation(value))
-    )
+    const values = []
+    for (const value of this.checkPatch(sceneControl.values)) {
+      const patched = this.checkPatch(value)
+      if (patched) {
+        values.push(this.readValue(patched))
+      }
+    }
     return `scenecontrol(${time},${sceneControlKind},${values.join(',')});`
   }
 
@@ -243,11 +279,15 @@ export class ToScript {
 
   readTimingGroup(timingGroup: AFFTimingGroupEvent) {
     const timingGroupAttribute = this.readTimingGroupKind(
-      this.removeLocation(timingGroup.timingGroupAttribute)
+      this.checkPatch(timingGroup.timingGroupAttribute, true)
     )
-    const items = this.removeLocation(timingGroup.items).map((item) =>
-      this.readNestableItem(this.removeLocation(item))
-    )
+    const items = []
+    for (const item of this.checkPatch(timingGroup.items)) {
+      const patched = this.checkPatch(item)
+      if (patched) {
+        items.push(this.readNestableItem(patched))
+      }
+    }
     return `timinggroup(${timingGroupAttribute})[${items.join(',')}]`
   }
 
