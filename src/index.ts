@@ -2,7 +2,16 @@ import { checkAFF } from './lang.js'
 import chalk, { Chalk } from 'chalk'
 import { readFile, writeFile } from 'node:fs/promises'
 import meow from 'meow'
-import { AFFErrorLevel, AFFErrorType } from './types.js'
+import {
+  AFFArcEvent,
+  AFFArcKind,
+  AFFBool,
+  AFFErrorLevel,
+  AFFErrorType,
+  AFFEvent,
+  AFFFloat,
+  AFFTimingEvent
+} from './types.js'
 import { ToScript } from './to-script.js'
 
 const args = meow(
@@ -28,14 +37,102 @@ const main = async (files: string[], { fix }: { fix: boolean }) => {
     if (fix) {
       const content = await readFile(file, 'utf-8')
       const [errors, ast] = checkAFF(content)
+      const patches: {
+        start: number
+        end: number
+        delete?: boolean
+        replace?: any
+      }[] = []
       if (errors.length > 0) {
         for (const error of errors) {
-          // switch (error.type) {
-          // }
+          switch (error.type) {
+            case AFFErrorType.DuplicatedState:
+            case AFFErrorType.DuplicatedTiming:
+            case AFFErrorType.ItemCutByTiming:
+            case AFFErrorType.TapItemOutOfBound:
+            case AFFErrorType.HoldItemOutOfBound:
+            case AFFErrorType.DuplicatedArcTap:
+            case AFFErrorType.OverlappedItem:
+            case AFFErrorType.ArcNonNegativeDuration:
+            case AFFErrorType.ArcZeroDurationNoArctap:
+            case AFFErrorType.ArcArctapInTimeRange:
+            case AFFErrorType.DuplicatedMetadataKey:
+            case AFFErrorType.TimingGroupNestedItem:
+            case AFFErrorType.HoldPositiveDuration:
+              patches.push({
+                start: error.location.startOffset,
+                end: error.location.endOffset,
+                delete: true
+              })
+              break
+            case AFFErrorType.FloatValueNotTwoDigits:
+              patches.push({
+                start: error.location.startOffset,
+                end: error.location.endOffset,
+                replace: (float: AFFFloat): AFFFloat => {
+                  return {
+                    kind: 'float',
+                    value: float.value,
+                    digit: 2
+                  }
+                }
+              })
+              break
+            case AFFErrorType.NonZeroBPMNonZeroBeats: // Default to 4 beats
+              patches.push({
+                start: error.location.startOffset,
+                end: error.location.endOffset,
+                replace: (float: AFFFloat): AFFFloat => {
+                  return {
+                    kind: 'float',
+                    value: 4,
+                    digit: 2
+                  }
+                }
+              })
+              break
+            case AFFErrorType.ZeroBPMZeroBeats:
+              patches.push({
+                start: error.location.startOffset,
+                end: error.location.endOffset,
+                replace: (float: AFFFloat): AFFFloat => {
+                  return {
+                    kind: 'float',
+                    value: 0,
+                    digit: 2
+                  }
+                }
+              })
+              break
+            case AFFErrorType.ArcZeroDurationSType:
+              patches.push({
+                start: error.location.startOffset,
+                end: error.location.endOffset,
+                replace: (arc: AFFArcKind): AFFArcKind => {
+                  return {
+                    ...arc,
+                    value: 's'
+                  }
+                }
+              })
+              break
+            case AFFErrorType.ArcArctapNotSolid:
+              patches.push({
+                start: error.location.startOffset,
+                end: error.location.endOffset,
+                replace: (bool: AFFBool): AFFBool => {
+                  return {
+                    ...bool,
+                    value: false
+                  }
+                }
+              })
+              break
+          }
         }
       }
-      const toScript = new ToScript()
-      const fixedContent = await toScript.readFile(ast)
+      const toScript = new ToScript(patches)
+      const fixedContent = toScript.readFile(ast)
       await writeFile(file, fixedContent)
     }
     const content = await readFile(file, 'utf-8')

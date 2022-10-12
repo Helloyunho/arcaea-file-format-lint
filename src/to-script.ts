@@ -64,7 +64,34 @@ export class ToScript {
           return undefined
         }
       } else {
-        return fix.replace
+        const result = fix.replace
+        const recursiveFix = (obj: any, orig: any) => {
+          if (obj instanceof Array) {
+            obj = obj.map((item, i) => recursiveFix(item, orig[i]))
+          }
+          if (typeof obj === 'object') {
+            for (const key in obj) {
+              if (obj[key] instanceof Array) {
+                obj[key] = obj[key].map((item: any) => {
+                  return recursiveFix(item, orig[key])
+                })
+              } else if (typeof obj[key] === 'object') {
+                obj[key] = recursiveFix(obj[key], orig[key])
+              } else if (typeof obj[key] === 'function') {
+                obj[key] = obj[key](orig[key])
+              } else if (obj[key] !== undefined) {
+                obj[key] = obj[key]
+              } else {
+                obj[key] = orig[key]
+              }
+            }
+          } else if (typeof obj === 'function') {
+            obj = obj(orig)
+          }
+          return obj
+        }
+        const value = recursiveFix(result, patch.data)
+        return value
       }
     }
     return patch.data
@@ -76,7 +103,7 @@ export class ToScript {
     for (const item of ast.items) {
       const patched = this.checkPatch(item)
       if (patched) {
-        items.push(this.readEvent(patched))
+        items.push(this.readItem(patched))
       }
     }
     return `${metadata}\n-\n${items.join('\n')}`
@@ -151,7 +178,14 @@ export class ToScript {
   }
 
   readFloat(float: AFFFloat) {
-    return `${float.value}.${float.digit}`
+    const negative = float.value < 0
+    const integer = Math.abs(Math.trunc(float.value))
+    const decimal = Math.trunc(
+      (Math.abs(float.value) - integer) * 10 ** float.digit
+    )
+    return `${negative ? '-' : ''}${integer}.${decimal
+      .toString()
+      .padStart(float.digit, '0')}`
   }
 
   readWord(word: AFFWord) {

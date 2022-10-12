@@ -83,7 +83,7 @@ class ToASTVisitor
         errors.push({
           message: `"${key}" is defined twice in the metadata section`,
           type: AFFErrorType.DuplicatedMetadataKey,
-          location: entry.key.location,
+          location: node.location,
           severity: AFFErrorLevel.Error,
           relatedInfo: [
             {
